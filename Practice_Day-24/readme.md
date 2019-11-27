@@ -1,2 +1,3 @@
 # Library Required:
-  # scorecardpy
+  - scorecardpy
+  * scorecardpy
