@@ -1,0 +1,46 @@
+-- Samuel --
+----------- Olympic -----------
+--(1) which atheletes until last olypics got most gold
+SELECT athelete,
+       sport,
+       sum(gold) AS TotalGold,
+       dense_rank() over(partition BY 1
+                         ORDER BY sum(gold) DESC) AS rank
+FROM olympic
+GROUP BY athelete,
+         sport;
+
+--(2) which atheletes frequently got gold from each year
+SELECT athelete,
+       sport,
+       count(1) AS total,
+       sum(gold) AS sum_gold,
+       dense_rank() over(partition BY 1
+                         ORDER BY count(1) DESC, sum(gold) DESC) AS rank
+FROM olympic
+WHERE gold <> 0
+GROUP BY athelete,
+         sport;
+
+--(3) gold achievement percentage to all gold for that sport in that year
+SELECT athelete,
+       sport,
+       gold,
+       YEAR,
+       sum(gold) over(partition BY sport, YEAR) AS total_all_gold
+FROM olympic
+ORDER BY gold DESC;
+-------------------------------
+
+
+----------- Petrol -----------
+--(4) percentage of remaining volume
+SELECT YEAR,
+       distributer_name,
+       ((vol_in - vol_out)/vol_in)*100 AS pct_remain,
+       lag(((vol_in - vol_out)/vol_in)*100) over(partition BY distributer_name
+                                                 ORDER BY YEAR) AS pct_remain_prev
+FROM petrol where year is not null;
+
+
+-------------------------------
